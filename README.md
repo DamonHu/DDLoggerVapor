@@ -1,1 +1,3 @@
-# HDLogger-Vapor
+# HDLogger
+
+A description of this package.
