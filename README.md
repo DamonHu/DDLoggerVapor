@@ -1,5 +1,7 @@
 # HDLogger
 
+### [中文文档](./README_zh.md)
+
 A simple `Vapor` Logger provider for outputting server logs to log files or data base. Based on [swift-log](https://github.com/apple/swift-log)。The `LogHandler` of `swift-log` has implemented
 
 ### Adaptation For `Vapor 4.0`
@@ -50,7 +52,13 @@ logger.info("ssssss")
 
 ### 1.2、only Saving to log file
 
-Saving to the log file has nothing to do with the request, so you don't need to fill in the request
+Saving to the log file has nothing to do with the request, so you don't need to fill in the request.
+
+outputs separate files based on the log's LogLevel. Debug logs are output to `debug.log`, error logs to `error.log`, and so on. By default, logs are output to:
+
+|Linux |	macOS |
+|----|----|
+|/var/log/Vapor/|	~/Library/Caches/Vapor/|
 
 ```
 let logger = HDLogger.logger(outputType: .file)
@@ -79,7 +87,7 @@ logger.info("ssssss")
 
 ## Custom options
 
-`outputType` can be combined freely, so it can be used in this way if there are multiple outputs
+1、 `outputType` can be combined freely, so it can be used in this way if there are multiple outputs
 
 ```
 //Save to file and terminal output at the same time
@@ -88,7 +96,7 @@ let logger = HDLogger.logger(req: req, outputType: [.terminal, .file])
 logger.info("ssssss")
 ```
 
-After output or saving, we provide a callback. If you want to do other functions, you can complete it in the callback
+2、 After output or saving, we provide a callback. If you want to do other functions, you can complete it in the callback
 
 ```
 let logger = HDLogger.logger(req: req, outputType: .file) { level, message, metadata in
