@@ -1,5 +1,15 @@
 # HDLogger
 
+<a href="https://vapor.codes">
+        <img src="http://img.shields.io/badge/vapor-4.0-brightgreen.svg" alt="Vapor 3">
+    </a>
+    <a href="https://swift.org">
+        <img src="http://img.shields.io/badge/swift-5.2-brightgreen.svg" alt="Swift 4.1">
+    </a>
+    <a href="LICENSE">
+        <img src="http://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License">
+    </a>
+
 ### [中文文档](./README_zh.md)
 
 A simple `Vapor` Logger provider for outputting server logs to log files or data base. Based on [swift-log](https://github.com/apple/swift-log)。The `LogHandler` of `swift-log` has implemented
