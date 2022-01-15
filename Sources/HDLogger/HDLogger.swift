@@ -26,7 +26,7 @@ public struct HDLogger {
     //MARK: - Get new Logger
     public static func logger(req: Request? = nil, label: String = "HDLogger", outputType: HDLoggerOutputType = .file, excludeLogLevels: [Logger.Level] = [], logComplete: LogComplete? = nil) -> Logger {
         return Logger.init(label: label) { label in
-            HDLoggerHandler.init(req: req, label: label, outputType: .file, excludeLogLevels: excludeLogLevels, logComplete: logComplete)
+            HDLoggerHandler.init(req: req, label: label, outputType: outputType, excludeLogLevels: excludeLogLevels, logComplete: logComplete)
         }
     }
 }
