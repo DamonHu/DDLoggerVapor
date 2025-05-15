@@ -31,6 +31,8 @@ public final class DDLoggerModel: Model {
 }
 
 public class DDLoggerCreateModel: Migration {
+    public init() {}
+    
     public func prepare(on database: Database) -> EventLoopFuture<Void> {
         return database.schema("DDLoggerModel").field("id", .int, .identifier(auto: true)).field("level", .string, .required).field("message", .string, .required).field("uuid", .string, .required).field("createTime", .double, .required).create()
     }
