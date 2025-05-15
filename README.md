@@ -1,4 +1,4 @@
-# HDLogger
+# DDLoggerVapor
 
 <a href="https://vapor.codes">
         <img src="http://img.shields.io/badge/vapor-4.0-brightgreen.svg" alt="Vapor 3">
@@ -14,13 +14,6 @@
 
 A simple `Vapor` Logger provider for outputting server logs to log files or data base. Based on [swift-log](https://github.com/apple/swift-log)。The `LogHandler` of `swift-log` has implemented
 
-### Adaptation For `Vapor 4.0`
-
-Special thanks to the following excellent projects for their ideas
-
-* [swift-log](https://github.com/apple/swift-log)
-* [swift-log-file](https://github.com/crspybits/swift-log-file)
-* [vapor-simple-file-logger](https://github.com/hallee/vapor-simple-file-logger)
 
 ## Installation
 
@@ -28,11 +21,11 @@ Add this dependency to your Package.swift:
 
 ```
 dependencies: [
-    .package(url: "https://github.com/DamonHu/HDLogger-Vapor.git", from: "4.0.1"),
+    .package(url: "https://github.com/DamonHu/DDLoggerVapor.git", from: "4.1.0"),
 ],
 targets: [
     .target(name: "App", dependencies: [
-        .product(name: "HDLogger", package: "HDLogger-Vapor")
+        .product(name: "DDLoggerVapor", package: "DDLoggerVapor")
             ///other dependency
     ])
 ]
@@ -40,10 +33,10 @@ targets: [
 
 ## Usage
 
-### Import `HDLogger` first
+### Import `DDLoggerVapor` first
 
 ```
-import HDLogger
+import DDLoggerVapor
 ```
 
 ### 1.1、only Terminal output
@@ -54,8 +47,8 @@ Terminal output is provided by default in vapor, which is no different from that
 //Vapor default
 req.logger.info("ddddddd")
 
-//HDLogger
-let logger = HDLogger.logger(req: req, outputType: .terminal)
+//DDLogger
+let logger = DDLogger.logger(req: req, outputType: .terminal)
 logger.info("ssssss")
 
 ```
@@ -71,7 +64,7 @@ outputs separate files based on the log's LogLevel. Debug logs are output to `de
 |/var/log/Vapor/|	~/Library/Caches/Vapor/|
 
 ```
-let logger = HDLogger.logger(outputType: .file)
+let logger = DDLogger.logger(outputType: .file)
 logger.info("ssssss")
 ```
 
@@ -91,7 +84,7 @@ public func configure(_ app: Application) throws {
 #### Saving to database
 
 ```
-let logger = HDLogger.logger(req: req, outputType: .database)
+let logger = DDLogger.logger(req: req, outputType: .database)
 logger.info("ssssss")
 ```
 
@@ -102,14 +95,14 @@ logger.info("ssssss")
 ```
 //Save to file and terminal output at the same time
 
-let logger = HDLogger.logger(req: req, outputType: [.terminal, .file])
+let logger = DDLogger.logger(req: req, outputType: [.terminal, .file])
 logger.info("ssssss")
 ```
 
 2、 After output or saving, we provide a callback. If you want to do other functions, you can complete it in the callback
 
 ```
-let logger = HDLogger.logger(req: req, outputType: .file) { level, message, metadata in
+let logger = DDLogger.logger(req: req, outputType: .file) { level, message, metadata in
 
 	//do something 
    req.logger.error(message, metadata: metadata)
@@ -118,3 +111,10 @@ let logger = HDLogger.logger(req: req, outputType: .file) { level, message, meta
 logger.info("ssssss")
 ```
 
+## Other
+
+Special thanks to the following excellent projects for their ideas
+
+* [swift-log](https://github.com/apple/swift-log)
+* [swift-log-file](https://github.com/crspybits/swift-log-file)
+* [vapor-simple-file-logger](https://github.com/hallee/vapor-simple-file-logger)

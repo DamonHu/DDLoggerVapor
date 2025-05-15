@@ -8,8 +8,8 @@
 import Vapor
 import Fluent
 
-public final class HDLoggerModel: Model {
-    public static let schema = "HDLoggerModel"
+public final class DDLoggerModel: Model {
+    public static let schema = "DDLoggerModel"
     public init() {
         level = ""
         message = ""
@@ -30,13 +30,9 @@ public final class HDLoggerModel: Model {
 
 }
 
-public class HDLoggerCreateModel: Migration {
-    public init() {
-        
-    }
-
+public class DDLoggerCreateModel: Migration {
     public func prepare(on database: Database) -> EventLoopFuture<Void> {
-        return database.schema("HDLoggerModel").field("id", .int, .identifier(auto: true)).field("level", .string, .required).field("message", .string, .required).field("uuid", .string, .required).field("createTime", .double, .required).create()
+        return database.schema("DDLoggerModel").field("id", .int, .identifier(auto: true)).field("level", .string, .required).field("message", .string, .required).field("uuid", .string, .required).field("createTime", .double, .required).create()
     }
 
     public func revert(on database: Database) -> EventLoopFuture<Void> {

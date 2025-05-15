@@ -11,10 +11,10 @@ import Vapor
 
 public typealias LogComplete = ((_ level: Logger.Level, _ message: Logger.Message, _ metadata: Logger.Metadata?)->Void)
 
-public struct HDLoggerOutputType: OptionSet {
-    public static let terminal = HDLoggerOutputType(rawValue: 1)
-    public static let file = HDLoggerOutputType(rawValue: 2)
-    public static let database = HDLoggerOutputType(rawValue: 4)
+public struct DDLoggerOutputType: OptionSet {
+    public static let terminal = DDLoggerOutputType(rawValue: 1)
+    public static let file = DDLoggerOutputType(rawValue: 2)
+    public static let database = DDLoggerOutputType(rawValue: 4)
 
     public let rawValue: Int
     public init(rawValue: Int) {
@@ -22,30 +22,30 @@ public struct HDLoggerOutputType: OptionSet {
     }
 }
 
-public struct HDLogger {
-    //MARK: - Get new Logger
-    public static func logger(req: Request? = nil, label: String = "HDLogger", outputType: HDLoggerOutputType = .file, excludeLogLevels: [Logger.Level] = [], logComplete: LogComplete? = nil) -> Logger {
-        return Logger.init(label: label) { label in
-            HDLoggerHandler.init(req: req, label: label, outputType: outputType, excludeLogLevels: excludeLogLevels, logComplete: logComplete)
+
+extension Request {
+    var DDLogger: Logger {
+        return self.DDLogger(outputType: [.terminal, .database])
+    }
+    
+    func DDLogger(outputType: DDLoggerOutputType = .terminal, logComplete: LogComplete? = nil) -> Logger {
+        return Logger.init(label: "DDLogger") { label in
+            HDLoggerHandler.init(req: self, outputType: outputType, logComplete: logComplete)
         }
     }
 }
 
 public struct HDLoggerHandler: LogHandler {
-    private var label: String
     private var uuid: String = "\(UUID())"
-    private var outputType: HDLoggerOutputType = .terminal
-    private var excludeLogLevels: [Logger.Level]
+    private var outputType: DDLoggerOutputType = .terminal
     private var logComplete: LogComplete?
     private var request: Request?
     //MARK: - ouput manager
     private var fileLogger: SimpleFileLogger
     //MARK: - init
-    public init(req: Request? = nil, label: String = "HDLogger" , outputType: HDLoggerOutputType = .file, excludeLogLevels: [Logger.Level] = [], logComplete: LogComplete? = nil) {
+    public init(req: Request? = nil, outputType: DDLoggerOutputType = .file, logComplete: LogComplete? = nil) {
         self.request = req
-        self.label = label
         self.outputType = outputType
-        self.excludeLogLevels = excludeLogLevels
         self.logComplete = logComplete
         self.fileLogger = SimpleFileLogger()
         self.metadata["ID"] = .string(self.uuid)
@@ -56,11 +56,8 @@ public struct HDLoggerHandler: LogHandler {
     public var logLevel: Logger.Level = .info
     public var metadata: Logger.Metadata = [:]
     public func log(level: Logger.Level, message: Logger.Message, metadata: Logger.Metadata?, source: String, file: String, function: String, line: UInt) {
-        guard !self.excludeLogLevels.contains(level) else {
-            return
-        }
         let _metadata = self.metadata.merging(metadata ?? [:], uniquingKeysWith: { (_, new) in new })
-        let _message = "[ \(level.description.uppercased()) ] \(self.label) > \(self._currentTime()) : [\(self._prettify(_metadata).map { " \($0)" } ?? "")] \(message) (\(file):\(line)) - (\(source):\(function))\n"
+        let _message = "[ \(level.description.uppercased()) ] DDLogger > \(self._currentTime()) : [\(self._prettify(_metadata).map { " \($0)" } ?? "")] \(message) (\(file):\(line)) - (\(source):\(function))\n"
         if self.outputType.contains(.file) {
             self.fileLogger.log(_message, level: level)
         }
@@ -69,7 +66,7 @@ public struct HDLoggerHandler: LogHandler {
                 req.logger.log(level: level, message, metadata: _metadata, source: source, file: file, function: function, line: line)
             }
             if self.outputType.contains(.database) {
-                let model = HDLoggerModel()
+                let model = DDLoggerModel()
                 model.uuid = self.uuid
                 model.level = level.description.uppercased()
                 model.message = _message
@@ -90,9 +87,12 @@ public struct HDLoggerHandler: LogHandler {
 
 extension HDLoggerHandler {
     func _currentTime() -> String {
-        let format = DateFormatter()
-        format.dateFormat = "yyyy-MM-dd-HH:mm:ss.SSS"
-        return format.string(from: Date())
+        var time = time_t(Date().timeIntervalSince1970)
+        var buffer = [CChar](repeating: 0, count: 64)
+        var tmStruct = tm()
+        gmtime_r(&time, &tmStruct)
+        strftime(&buffer, buffer.count, "%Y-%m-%d %H:%M:%S", &tmStruct)
+        return String(cString: buffer)
     }
 
     func _prettify(_ metadata: Logger.Metadata) -> String? {
