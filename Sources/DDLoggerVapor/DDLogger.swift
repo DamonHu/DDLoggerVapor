@@ -23,12 +23,12 @@ public struct DDLoggerOutputType: OptionSet {
 }
 
 
-extension Request {
-    var DDLogger: Logger {
+public extension Request {
+    public var DDLogger: Logger {
         return self.DDLogger(outputType: [.terminal, .database])
     }
     
-    func DDLogger(outputType: DDLoggerOutputType = .terminal, logComplete: LogComplete? = nil) -> Logger {
+    public func DDLogger(outputType: DDLoggerOutputType = .terminal, logComplete: LogComplete? = nil) -> Logger {
         return Logger.init(label: "DDLogger") { label in
             HDLoggerHandler.init(req: self, outputType: outputType, logComplete: logComplete)
         }
