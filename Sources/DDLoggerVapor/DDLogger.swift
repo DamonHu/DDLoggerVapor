@@ -57,7 +57,7 @@ public struct HDLoggerHandler: LogHandler {
     public var metadata: Logger.Metadata = [:]
     public func log(level: Logger.Level, message: Logger.Message, metadata: Logger.Metadata?, source: String, file: String, function: String, line: UInt) {
         let _metadata = self.metadata.merging(metadata ?? [:], uniquingKeysWith: { (_, new) in new })
-        let _message = "[ \(level.description.uppercased()) ] DDLogger > \(self._currentTime()) : [\(self._prettify(_metadata).map { " \($0)" } ?? "")] \(message) (\(file):\(line)) - (\(source):\(function))\n"
+        let _message = "[\(self._currentTime())] [ \(level.description.uppercased()) ] File: \(file) | Line: \(line) | Function: \(function) | \n---------------------------------\n\(message)"
         if self.outputType.contains(.file) {
             self.fileLogger.log(_message, level: level)
         }
@@ -93,9 +93,5 @@ extension HDLoggerHandler {
         gmtime_r(&time, &tmStruct)
         strftime(&buffer, buffer.count, "%Y-%m-%d %H:%M:%S", &tmStruct)
         return String(cString: buffer)
-    }
-
-    func _prettify(_ metadata: Logger.Metadata) -> String? {
-        return !metadata.isEmpty ? metadata.map { "\($0): \($1)" }.joined(separator: " ") : nil
     }
 }

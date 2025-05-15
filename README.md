@@ -20,7 +20,7 @@ Add the following dependency to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/DamonHu/DDLoggerVapor.git", from: "4.1.1"),
+    .package(url: "https://github.com/DamonHu/DDLoggerVapor.git", from: "4.1.3"),
 ],
 targets: [
     .target(name: "App", dependencies: [
